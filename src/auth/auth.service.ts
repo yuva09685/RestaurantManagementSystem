@@ -36,7 +36,7 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string): Promise<{ token: string }> {
+  async login(email: string, password: string): Promise<{ token: string, role:string }> {
     try {
       const user = await this.usersService.findUserByEmail(email);
       if (!user) {
@@ -50,7 +50,7 @@ export class AuthService {
 
       const token = this.jwtService.sign({ id: user.id, role: user.role });
 
-      return { token };
+      return { token, role: user.role };
     } catch (error) {
       throw new InternalServerErrorException('Error logging in: ' + error.message);
     }
