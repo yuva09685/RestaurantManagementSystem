@@ -1,31 +1,42 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index';
-import { usersTable } from '../db/schema';
+import { users } from '../db/schema';
 
 @Injectable()
 export class UsersService {
   getAllUsers() {
     throw new Error('Method not implemented.');
   }
-  async createUser(data: { name: string; age: number; email: string; password: string; role?: 'manager' | 'waiter' }) {
+
+  async createUser(data: { name: string; email: string; password: string; role_id: string }) {
     try {
-      await db.insert(usersTable).values({
+      await db.insert(users).values({
         name: data.name,
-        age: data.age,
         email: data.email,
         password: data.password,
-        role: data.role ?? 'waiter', // Default role is 'waiter'
+        role_id: data.role_id, 
       });
     } catch (error) {
       throw new InternalServerErrorException('Error creating user: ' + error.message);
     }
   }
 
-  async findUserByEmail(email: string): Promise<{ id: number; name: string; age: number; email: string; password: string; role: 'manager' | 'waiter' } | null> {
+  async findUserByEmail(email: string): Promise<{
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    role_id: string;
+  } | null> {
     try {
-      const users = await db.select().from(usersTable).where(eq(usersTable.email, email));
-      return users.length > 0 ? users[0] : null;
+      const usersData = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .then(res => res[0]);
+
+      return usersData || null;
     } catch (error) {
       throw new InternalServerErrorException('Error fetching user: ' + error.message);
     }

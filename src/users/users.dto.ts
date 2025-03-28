@@ -1,15 +1,12 @@
 import * as Joi from 'joi';
 
-// Define User Role Type
-export type UserRole = 'manager' | 'waiter';
-
 // Joi Validation Schema
 export const CreateUserSchema = Joi.object({
   name: Joi.string().min(3).max(255).required(),
   age: Joi.number().min(18).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  role: Joi.string().valid('manager', 'waiter').default('waiter'), // Role-based access
+  role_id: Joi.string().uuid().required(),
 });
 
 // DTO Class
@@ -18,5 +15,5 @@ export class CreateUserDto {
   age: number;
   email: string;
   password: string;
-  role?: UserRole; // Role is strictly 'manager' or 'waiter'
+  role_id: string; // UUID of the role instead of role name
 }

@@ -17,11 +17,12 @@ export class UsersController {
         throw new BadRequestException(error.details[0].message);
       }
 
-      return this.usersService.createUser(userData);
+      return await this.usersService.createUser(userData);
     } catch (error) {
       throw new BadRequestException('Signup failed: ' + error.message);
     }
   }
+
   @Get()
   @Roles('manager') 
   @UseGuards(RolesGuard)
